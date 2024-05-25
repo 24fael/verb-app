@@ -116,51 +116,57 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
     return(
         <div className="card w-96 bg-base-100 shadow-xl mb-5">
             <div className="card-body">
-                { task.isCompleted ?
-                    <span className="badge badge-accent">Completed</span>
-                    :
-                    <></>
-                }
-                {
-                    isEditing ?
-                        <>
-                            <input  
-                            type="text"
-                            placeholder="Type here"
-                            className="input input-bordered w-full max-w-xs"
-                            value={editTitle}
-                            onChange={(event) => setEditTitle(event.target.value)}/>
-
-                            <textarea 
-                            className="textarea textarea-bordered h-24"
-                            placeholder="Type here"
-                            value={editContent}
-                            onChange={(event) => setEditContent(event.target.value)}></textarea>
-                        </>
-                    :
-                        <>
-                            <h2 className={task.isCompleted ? "card-title line-through" : "card-title"}>{task.title}</h2>
-                            <p className={task.isCompleted ? "line-through" : ""}>{task.content}</p>
-                        </>
-                }
-                <div className="card-actions justify-end">
-                    {isEditing ? 
-                        <>
-                            <button className="btn btn-warning" onClick={()=> setIsEditing(false)}>Cancel</button>
-                            <button className="btn btn-success" onClick={() => editTask(editTaskId)}>Save Changes</button>
-                        </>
+            <details className="collapse collapse-arrow">
+                <summary className="collapse-title text-xl">
+                    { task.isCompleted ?
+                        <span className="badge badge-accent">Completed</span>
                         :
-                        <>
-                            <button className="btn btn-success" onClick={() => completeTask(taskID)}>{task.isCompleted ? "Undo" : "Complete"}</button>
-                            {task.isCompleted ?
-                                ""
-                                :
-                                <button className="btn btn-warning" onClick={()=> isEditingMode(taskID)}>Edit</button>
-                            }
-                            <button className="btn btn-error" onClick={() => deleteTask(taskID)}>Delete</button>
-                        </>
+                        <></>
                     }
+                    {
+                        isEditing ?
+                            <>
+                                <input  
+                                type="text"
+                                placeholder="Type here"
+                                className="input input-bordered w-full max-w-xs"
+                                value={editTitle}
+                                onChange={(event) => setEditTitle(event.target.value)}/>
+
+                                <textarea 
+                                className="textarea textarea-bordered h-40 w-full mt-5"
+                                placeholder="Type here"
+                                value={editContent}
+                                onChange={(event) => setEditContent(event.target.value)}></textarea>
+                            </>
+                        :
+                            <>
+                                <h2 className={task.isCompleted ? "card-title line-through font-black" : "card-title font-black"}>{task.title}</h2>
+                                <p className={task.isCompleted ? "line-through font-normal" : "font-normal"} style={{ whiteSpace: "pre-wrap", overflowWrap: "break-word" }}>{task.content}</p>
+                            </>
+                    }
+                </summary>
+                <div className="collapse-content"> 
+                    <div className="card-actions justify-end">
+                        {isEditing ? 
+                            <>
+                                <button className="btn btn-warning" onClick={()=> setIsEditing(false)}>Cancel</button>
+                                <button className="btn btn-success" onClick={() => editTask(editTaskId)}>Save Changes</button>
+                            </>
+                            :
+                            <>
+                                <button className="btn btn-success" onClick={() => completeTask(taskID)}>{task.isCompleted ? "Undo" : "Complete"}</button>
+                                {task.isCompleted ?
+                                    ""
+                                    :
+                                    <button className="btn btn-warning" onClick={()=> isEditingMode(taskID)}>Edit</button>
+                                }
+                                <button className="btn btn-error" onClick={() => deleteTask(taskID)}>Delete</button>
+                            </>
+                        }
+                    </div>
                 </div>
+            </details>
             </div>
         </div>
     )

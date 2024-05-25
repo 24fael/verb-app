@@ -71,7 +71,9 @@ export default function Home() {
           tasks_arr = Object.entries(response.data).reverse().map(([id, task]) => {
             if(task.isCompleted === true){
               return(
-                  <TaskItem key={id} taskID={id} task={task} getTasks={getTasks}/>
+                  <div key={id} className="flex flex-col">
+                    <TaskItem taskID={id} task={task} getTasks={getTasks}/>
+                  </div>
               )
             }
             return null; // Ensure all paths return something
@@ -81,7 +83,7 @@ export default function Home() {
           tasks_arr = Object.entries(response.data).reverse().map(([id, task]) => {
             if(task.isCompleted === false){
               return(
-                  <TaskItem key={id} taskID={id} task={task} getTasks={getTasks}/>
+                    <TaskItem taskID={id} task={task} getTasks={getTasks}/>
               )
             }
             return null; // Ensure all paths return something
@@ -99,19 +101,20 @@ export default function Home() {
 
   useEffect(() => {
     getTasks()
-  }, [completedTasksOnly]);
+  }, [completedTasksOnly]) //Observes the state so whenever it changes, it executes the getTasks function
 
   return (
     <>
       <Navbar/>
       <main className="flex justify-center">
-          <div className='grid'>
+          <div className='pb-9'>
             <div className='flex justify-center'>
               <h1 className='text-6xl font-bold'>Tasks</h1>
             </div>
-            <div className='flex justify-between'>
+
+            <div className='flex justify-center'>
             <button
-              className="btn btn-primary btn-lg text-white mt-10"
+              className="btn btn-primary btn-lg text-white mt-10 mr-5"
               onClick={() => {
                 const modal = document.getElementById('add-task-modal') as HTMLDialogElement;
                 if (modal) {
@@ -128,14 +131,18 @@ export default function Home() {
               }
             </div>
 
-            <div className='mt-16'>
-              { isLoading ?
-                <TasksSkeleton/>
-                :
-                <TaskList tasks={tasks}></TaskList>
-              }
-
-              {/* <h3 className='text-center text-3xl'>No Tasks.</h3> */}
+            <div className='mt-10'>
+            { isLoading ? (
+              <TasksSkeleton />
+            ) : (
+              tasks.length === 0 ? (
+                <h3 className='text-center text-lg'>No tasks yet. Go create some!</h3>
+              ) : (
+                <div className="grid grid-cols-2 gap-10">
+                  <TaskList tasks={tasks} />
+                </div>
+              )
+            )}
             </div>
           </div>
       </main>
