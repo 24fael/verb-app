@@ -2,26 +2,73 @@
 
 import Navbar from './components/Navbar'
 import TaskList from './components/tasks/TaskList'
+import TaskItem from "./components/tasks/TaskItem"
 import axios from 'axios'
-import { useState } from 'react'
+import { useState, Suspense, useTransition } from 'react'
+import { useVerbStore } from '@/state/verb-store'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import TasksSkeleton from './components/tasks/TasksSkeleton'
+import Swal from 'sweetalert2'
 
 export default function Home() {
+  const router = useRouter()
   const [seeCompletedTasks, setSeeCompletedTasks] = useState(false)
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
+  const {isLoading, setIsLoading} = useVerbStore();
+  const [tasks, setTasks] = useState()
 
   function addTask():any{
     axios.post('https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json', {
       title: title,
-      content: content
+      content: content,
+      isCompleted: false
     })
     .then(response => {
-      console.log(response.data)
+      // Refresh the items after adding a new one
+      setTitle("")
+      setContent("")
+      getTasks()
+
+      Swal.fire({
+        icon: "success",
+        title: "Task Added",
+        text: "You have successfully added a task!",
+        position: "bottom-start",
+        showConfirmButton: false,
+        timer: 4000,
+        toast: true
+      })
     })
     .catch(error => {
       console.log(error)
     })
   }
+
+  function getTasks():any{
+    setIsLoading(true)
+
+    axios.get("https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json")
+    .then((response: any) => {
+        // Have to use Object.entries since data from firebase is Object rather than Array
+        const tasks_arr = Object.entries(response.data).reverse().map(([id, task]) => {
+            return(
+                <TaskItem key={id} taskID={id} task={task} getTasks={getTasks}/>
+            )
+        })
+
+        setTasks(tasks_arr)
+        setIsLoading(false)
+    })
+    .catch((error: any) => {
+        console.log(error)
+    })
+  }
+
+  useEffect(() => {
+    getTasks()
+  }, []);
 
   return (
     <>
@@ -41,7 +88,11 @@ export default function Home() {
             </div>
 
             <div className='mt-16'>
-              <TaskList></TaskList>
+              { isLoading ?
+                <TasksSkeleton/>
+                :
+                <TaskList tasks={tasks}></TaskList>
+              }
 
               {/* <h3 className='text-center text-3xl'>No Tasks.</h3> */}
             </div>
