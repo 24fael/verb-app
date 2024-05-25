@@ -3,7 +3,19 @@ import Swal from 'sweetalert2'
 import { useVerbStore } from "@/state/verb-store"
 import { useState } from "react"
 
-export default function TaskItem({taskID, task, getTasks}){
+interface Task {
+    title: string;
+    content: string;
+    isCompleted: boolean;
+}
+
+interface TaskItemProps {
+    taskID: string;
+    task: Task;
+    getTasks: () => void;
+}
+
+const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
     const {isLoading} = useVerbStore()
     const [editTitle, setEditTitle] = useState("");
     const [editContent, setEditContent] = useState("");
@@ -149,3 +161,5 @@ export default function TaskItem({taskID, task, getTasks}){
         </div>
     )
 }
+
+export default TaskItem
