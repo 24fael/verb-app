@@ -16,8 +16,12 @@ export default function Home() {
   const [seeCompletedTasks, setSeeCompletedTasks] = useState(false)
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
-  const {isLoading, setIsLoading} = useVerbStore();
+  const {
+    isLoading, 
+    setIsLoading
+  } = useVerbStore();
   const [tasks, setTasks] = useState()
+  const [completedTasksOnly, setCompletedTasksOnly] = useState(false)
 
   function addTask():any{
     axios.post('https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json', {
@@ -51,13 +55,29 @@ export default function Home() {
 
     axios.get("https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json")
     .then((response: any) => {
-        // Have to use Object.entries since data from firebase is Object rather than Array
-        const tasks_arr = Object.entries(response.data).reverse().map(([id, task]) => {
-            return(
-                <TaskItem key={id} taskID={id} task={task} getTasks={getTasks}/>
-            )
-        })
+        let tasks_arr = null;
 
+        // Checks if only the completed tasks should be shown
+        if(completedTasksOnly){
+          tasks_arr = Object.entries(response.data).reverse().map(([id, task]) => {
+            if(task.isCompleted === true){
+              return(
+                  <TaskItem key={id} taskID={id} task={task} getTasks={getTasks}/>
+              )
+            }
+          })
+        } else {
+          // Have to use Object.entries since data from firebase is Object rather than Array
+          tasks_arr = Object.entries(response.data).reverse().map(([id, task]) => {
+            if(task.isCompleted === false){
+              return(
+                  <TaskItem key={id} taskID={id} task={task} getTasks={getTasks}/>
+              )
+            }
+          })
+        }
+
+        console.log(completedTasksOnly)
         setTasks(tasks_arr)
         setIsLoading(false)
     })
@@ -68,7 +88,7 @@ export default function Home() {
 
   useEffect(() => {
     getTasks()
-  }, []);
+  }, [completedTasksOnly]);
 
   return (
     <>
@@ -80,10 +100,10 @@ export default function Home() {
             </div>
             <div className='flex justify-between'>
               <button className="btn btn-primary btn-lg text-white mt-10" onClick={()=> document.getElementById('add-task-modal').showModal()}>Add a task</button>
-              { seeCompletedTasks ?
-                <button className="btn btn-secondary btn-lg text-white mt-10" onClick={() => setSeeCompletedTasks(!seeCompletedTasks)}>See Uncompleted Tasks</button>
+              { completedTasksOnly ?
+                <button className="btn btn-secondary btn-lg text-white mt-10" onClick={() => setCompletedTasksOnly(false)}>See Uncompleted Tasks</button>
                 :
-                <button className="btn btn-accent btn-lg text-white mt-10" onClick={() => setSeeCompletedTasks(!seeCompletedTasks)}>See Completed Tasks</button>
+                <button className="btn btn-accent btn-lg text-white mt-10" onClick={() => setCompletedTasksOnly(true)}>See Completed Tasks</button>
               }
             </div>
 

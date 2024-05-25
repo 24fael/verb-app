@@ -1,9 +1,15 @@
 import axios from "@/node_modules/axios/index"
 import Swal from 'sweetalert2'
 import { useVerbStore } from "@/state/verb-store"
+import { useState } from "react"
 
 export default function TaskItem({taskID, task, getTasks}){
     const {isLoading} = useVerbStore()
+    const [editTitle, setEditTitle] = useState("");
+    const [editContent, setEditContent] = useState("");
+    const [editIsComplete, setEditIsComplete] = useState(false);
+    const [editTaskId, setEditTaskId] = useState("");
+    const [isEditing, setIsEditing] = useState(false);
 
     function deleteTask(task_id){
         axios.delete(`https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks/${task_id}.json`)
@@ -25,15 +31,119 @@ export default function TaskItem({taskID, task, getTasks}){
         })
     }
 
+    function completeTask(task_id){
+        axios.put(`https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks/${task_id}.json`, {
+            title: task.title,
+            content: task.content,
+            isCompleted: task.isCompleted ? false : true
+        })
+        .then(response => {
+            if(task.isCompleted){
+                Swal.fire({
+                    icon: "success",
+                    title: "Task Undone!",
+                    text: "The task has been moved back to 'Uncompleted Tasks'.",
+                    position: "bottom-start",
+                    showConfirmButton: false,
+                    timer: 5000,
+                    toast: true
+                })
+            } else {
+                Swal.fire({
+                    icon: "success",
+                    title: "Task Completed!",
+                    text: "The task has been moved to 'Completed Tasks'.",
+                    position: "bottom-start",
+                    showConfirmButton: false,
+                    timer: 5000,
+                    toast: true
+                })
+            }
+
+            getTasks()
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
+    function isEditingMode(task_id){
+        axios.get(`https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks/${task_id}.json`)
+        .then(response => {
+        
+            setEditTitle(response.data.title)
+            setEditContent(response.data.content)
+            setEditIsComplete(task.isCompleted) //Should keep the previous value
+            setEditTaskId(task_id)
+            setIsEditing(true)
+        })
+    }
+
+    function editTask(task_id){
+        axios.put(`https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks/${task_id}.json`, {
+            title: editTitle,
+            content: editContent,
+            isCompleted: editIsComplete
+        })
+        .then(response => {
+            Swal.fire({
+                icon: "success",
+                title: "Changes Saved!",
+                text: "You have successfully updated your task!",
+                position: "bottom-start",
+                showConfirmButton: false,
+                timer: 4000,
+                toast: true
+            })
+
+            getTasks()
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
     return(
         <div className="card w-96 bg-base-100 shadow-xl mb-5">
             <div className="card-body">
-                <h2 className="card-title">{task.title}</h2>
-                <p>{task.content}</p>
+                { task.isCompleted ?
+                    <span className="badge badge-accent">Completed</span>
+                    :
+                    <></>
+                }
+                {
+                    isEditing ?
+                        <>
+                            <input  
+                            type="text"
+                            placeholder="Type here"
+                            className="input input-bordered w-full max-w-xs"
+                            value={editTitle}
+                            onChange={(event) => setEditTitle(event.target.value)}/>
+
+                            <textarea 
+                            className="textarea textarea-bordered h-24"
+                            placeholder="Type here"
+                            value={editContent}
+                            onChange={(event) => setEditContent(event.target.value)}></textarea>
+                        </>
+                    :
+                        <>
+                            <h2 className={task.isCompleted ? "card-title line-through" : "card-title"}>{task.title}</h2>
+                            <p className={task.isCompleted ? "line-through" : ""}>{task.content}</p>
+                        </>
+                }
                 <div className="card-actions justify-end">
-                    <button className="btn btn-success">Complete</button>
-                    <button className="btn btn-warning">Edit</button>
-                    <button className="btn btn-error" onClick={() => deleteTask(taskID)}>Delete</button>
+                    {isEditing ? 
+                        <>
+                            <button className="btn btn-warning" onClick={()=> setIsEditing(false)}>Cancel</button>
+                            <button className="btn btn-success" onClick={() => editTask(editTaskId)}>Save Changes</button>
+                        </>
+                        :
+                        <>
+                            <button className="btn btn-success" onClick={() => completeTask(taskID)}>{task.isCompleted ? "Undo" : "Complete"}</button>
+                            <button className="btn btn-warning" onClick={()=> isEditingMode(taskID)}>Edit</button>
+                            <button className="btn btn-error" onClick={() => deleteTask(taskID)}>Delete</button>
+                        </>
+                    }
                 </div>
             </div>
         </div>
