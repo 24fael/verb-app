@@ -152,7 +152,11 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
                         :
                         <>
                             <button className="btn btn-success" onClick={() => completeTask(taskID)}>{task.isCompleted ? "Undo" : "Complete"}</button>
-                            <button className="btn btn-warning" onClick={()=> isEditingMode(taskID)}>Edit</button>
+                            {task.isCompleted ?
+                                ""
+                                :
+                                <button className="btn btn-warning" onClick={()=> isEditingMode(taskID)}>Edit</button>
+                            }
                             <button className="btn btn-error" onClick={() => deleteTask(taskID)}>Delete</button>
                         </>
                     }
