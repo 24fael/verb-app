@@ -6,7 +6,6 @@ import TaskItem from "./components/tasks/TaskItem"
 import axios, { AxiosResponse } from 'axios'
 import { useState, useEffect } from 'react'
 import { useVerbStore } from '@/state/verb-store'
-import { useRouter } from 'next/navigation'
 import TasksSkeleton from './components/tasks/TasksSkeleton'
 import Swal from 'sweetalert2'
 
@@ -21,8 +20,6 @@ interface TasksResponse {
 }
 
 export default function Home() {
-  const router = useRouter()
-  const [seeCompletedTasks, setSeeCompletedTasks] = useState(false)
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const {
@@ -139,7 +136,7 @@ export default function Home() {
                 <h3 className='text-center text-lg'>No tasks yet. Go create some!</h3>
               ) : (
                 <div className="grid grid-cols-2 gap-10">
-                  <TaskList tasks={tasks} />
+                  {tasks}
                 </div>
               )
             )}
