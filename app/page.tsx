@@ -110,7 +110,12 @@ export default function Home() {
               <h1 className='text-6xl font-bold'>Tasks</h1>
             </div>
             <div className='flex justify-between'>
-              <button className="btn btn-primary btn-lg text-white mt-10" onClick={()=> document.getElementById('add-task-modal').showModal()}>Add a task</button>
+              <button className="btn btn-primary btn-lg text-white mt-10" onClick={()=> {
+                const modal = document.getElementById('add-task-modal');
+                if (modal) {
+                  modal.showModal();
+                }
+              }}>Add a task</button>
               { completedTasksOnly ?
                 <button className="btn btn-secondary btn-lg text-white mt-10" onClick={() => setCompletedTasksOnly(false)}>See Uncompleted Tasks</button>
                 :
