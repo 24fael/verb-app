@@ -23,7 +23,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
     const [editTaskId, setEditTaskId] = useState("");
     const [isEditing, setIsEditing] = useState(false);
 
-    function deleteTask(task_id){
+    function deleteTask(task_id: string){
         axios.delete(`https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks/${task_id}.json`)
         .then(response => {
             Swal.fire({
@@ -43,7 +43,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
         })
     }
 
-    function completeTask(task_id){
+    function completeTask(task_id: string){
         axios.put(`https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks/${task_id}.json`, {
             title: task.title,
             content: task.content,
@@ -78,7 +78,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
         })
     }
 
-    function isEditingMode(task_id){
+    function isEditingMode(task_id: string){
         axios.get(`https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks/${task_id}.json`)
         .then(response => {
         
@@ -90,7 +90,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
         })
     }
 
-    function editTask(task_id){
+    function editTask(task_id: string){
         axios.put(`https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks/${task_id}.json`, {
             title: editTitle,
             content: editContent,

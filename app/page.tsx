@@ -3,13 +3,22 @@
 import Navbar from './components/Navbar'
 import TaskList from './components/tasks/TaskList'
 import TaskItem from "./components/tasks/TaskItem"
-import axios from 'axios'
-import { useState, Suspense, useTransition } from 'react'
+import axios, { AxiosResponse } from 'axios'
+import { useState, useEffect } from 'react'
 import { useVerbStore } from '@/state/verb-store'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import TasksSkeleton from './components/tasks/TasksSkeleton'
 import Swal from 'sweetalert2'
+
+interface Task {
+  title: string;
+  content: string;
+  isCompleted: boolean;
+}
+
+interface TasksResponse {
+  [key: string]: Task;
+}
 
 export default function Home() {
   const router = useRouter()
@@ -20,16 +29,16 @@ export default function Home() {
     isLoading, 
     setIsLoading
   } = useVerbStore();
-  const [tasks, setTasks] = useState()
+  const [tasks, setTasks] = useState<React.ReactNode[]>([])
   const [completedTasksOnly, setCompletedTasksOnly] = useState(false)
 
-  function addTask():any{
+  function addTask(): void {
     axios.post('https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json', {
-      title: title,
-      content: content,
+      title,
+      content,
       isCompleted: false
     })
-    .then(response => {
+    .then((response: AxiosResponse) => {
       // Refresh the items after adding a new one
       setTitle("")
       setContent("")
@@ -45,17 +54,17 @@ export default function Home() {
         toast: true
       })
     })
-    .catch(error => {
+    .catch((error: any) => {
       console.log(error)
     })
   }
 
-  function getTasks():any{
+  function getTasks(): void {
     setIsLoading(true)
 
     axios.get("https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json")
-    .then((response: any) => {
-        let tasks_arr = null;
+    .then((response: AxiosResponse<TasksResponse>) => {
+        let tasks_arr: React.ReactNode[] = [];
 
         // Checks if only the completed tasks should be shown
         if(completedTasksOnly){
@@ -65,7 +74,8 @@ export default function Home() {
                   <TaskItem key={id} taskID={id} task={task} getTasks={getTasks}/>
               )
             }
-          })
+            return null; // Ensure all paths return something
+          }).filter(Boolean);
         } else {
           // Have to use Object.entries since data from firebase is Object rather than Array
           tasks_arr = Object.entries(response.data).reverse().map(([id, task]) => {
@@ -74,7 +84,8 @@ export default function Home() {
                   <TaskItem key={id} taskID={id} task={task} getTasks={getTasks}/>
               )
             }
-          })
+            return null; // Ensure all paths return something
+          }).filter(Boolean);
         }
 
         console.log(completedTasksOnly)
