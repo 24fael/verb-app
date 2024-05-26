@@ -2,6 +2,9 @@ import axios from "@/node_modules/axios/index"
 import Swal from 'sweetalert2'
 import { useVerbStore } from "@/state/verb-store"
 import { useState } from "react"
+import ExpandableText from "../miscellaneous/ExpandableText";
+import Linkify from "linkify-react";
+import { FaEdit, FaTrash, FaTimes, FaUndo, FaSave } from 'react-icons/fa';
 
 interface Task {
     title: string;
@@ -91,6 +94,19 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
     }
 
     function editTask(task_id: string){
+        // Checks if the content field is empty or null
+        if(editContent === null || editContent === ""){
+            return Swal.fire({
+                icon: "warning",
+                title: "Content Empty",
+                text: "Content must not be empty!",
+                position: "bottom-start",
+                showConfirmButton: false,
+                timer: 4000,
+                toast: true
+            })
+        }
+
         axios.put(`https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks/${task_id}.json`, {
             title: editTitle,
             content: editContent,
@@ -112,6 +128,13 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
             console.log(error)
         })
     }
+
+    const linkifyOptions = {
+        defaultProtocol: 'https',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        className: 'text-blue-500 hover:underline',
+    };
 
     return(
         <div className="card w-96 bg-base-100 shadow-xl mb-5">
@@ -141,8 +164,8 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
                             </>
                         :
                             <>
-                                <h2 className={task.isCompleted ? "card-title line-through font-black" : "card-title font-black"}>{task.title}</h2>
-                                <p className={task.isCompleted ? "line-through font-normal" : "font-normal"} style={{ whiteSpace: "pre-wrap", overflowWrap: "break-word" }}>{task.content}</p>
+                                <Linkify options={linkifyOptions} as="h2" className={task.isCompleted ? "card-title line-through font-black" : "card-title font-black"}>{task.title}</Linkify>
+                                <ExpandableText text={task.content} maxLength={70} />
                             </>
                     }
                 </summary>
@@ -159,9 +182,17 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
                                 {task.isCompleted ?
                                     ""
                                     :
-                                    <button className="btn btn-warning" onClick={()=> isEditingMode(taskID)}>Edit</button>
+                                    <div className="tooltip" data-tip="Edit">
+                                        <button className="btn btn-accent" onClick={()=> isEditingMode(taskID)}>
+                                            <FaEdit />
+                                        </button>
+                                    </div>
                                 }
-                                <button className="btn btn-error" onClick={() => deleteTask(taskID)}>Delete</button>
+                                <div className="tooltip" data-tip="Delete">
+                                    <button className="btn btn-error" onClick={() => deleteTask(taskID)}>
+                                        <FaTrash/>
+                                    </button>
+                                </div>
                             </>
                         }
                     </div>

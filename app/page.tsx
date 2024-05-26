@@ -28,15 +28,35 @@ export default function Home() {
   } = useVerbStore();
   const [tasks, setTasks] = useState<React.ReactNode[]>([])
   const [completedTasksOnly, setCompletedTasksOnly] = useState(false)
+  const [addAnother, setAddAnother] = useState(false);
 
-  function addTask(): void {
+  function addTask() {
+    // Checks if the content field is empty or null
+    if(content === null || content === ""){
+      return Swal.fire({
+        icon: "warning",
+        title: "Content Empty",
+        text: "Content must not be empty!",
+        position: "bottom-start",
+        showConfirmButton: false,
+        timer: 4000,
+        toast: true
+      })
+    }
+
     axios.post('https://verb-app-d5a55-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json', {
       title,
       content,
       isCompleted: false
     })
     .then((response: AxiosResponse) => {
-      // Refresh the items after adding a new one
+      if (!addAnother) {
+        // Close the modal if the user doesn't want to add another task
+        const modal = document.getElementById('add-task-modal') as HTMLDialogElement;
+        modal.close();
+      } 
+      
+      // Clear the items after adding a new one
       setTitle("")
       setContent("")
       getTasks()
@@ -110,17 +130,17 @@ export default function Home() {
             </div>
 
             <div className='flex justify-center'>
-            <button
-              className="btn btn-primary btn-lg text-white mt-10 mr-5"
-              onClick={() => {
-                const modal = document.getElementById('add-task-modal') as HTMLDialogElement;
-                if (modal) {
-                  modal.showModal();
-                }
-              }}
-            >
-              Add a task
-            </button>
+              <button
+                className="btn btn-primary btn-lg text-white mt-10 mr-5"
+                onClick={() => {
+                  const modal = document.getElementById('add-task-modal') as HTMLDialogElement;
+                  if (modal) {
+                    modal.showModal();
+                  }
+                }}
+              >
+                Add a task
+              </button>
               { completedTasksOnly ?
                 <button className="btn btn-secondary btn-lg text-white mt-10" onClick={() => setCompletedTasksOnly(false)}>See Uncompleted Tasks</button>
                 :
@@ -156,9 +176,20 @@ export default function Home() {
           </label>
           <label className="form-control">
             <div className="label">
-              <span className="label-text">Content</span>
+              <span className="label-text">Content (required)</span>
             </div>
             <textarea className="textarea textarea-bordered h-24" placeholder="Type here" value={content} onChange={(event) => setContent(event.target.value)}></textarea>
+          </label>
+          <label className="form-control w-full max-w-xs my-5">
+            <div className="label cursor-pointer">
+              <span className="label-text">Add another task immediately?</span>
+              <input
+                type="checkbox"
+                className="toggle toggle-accent"
+                checked={addAnother}
+                onChange={() => setAddAnother(!addAnother)}
+              />
+            </div>
           </label>
           <div className="modal-action">
             <form method="dialog">
