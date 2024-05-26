@@ -104,7 +104,10 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
                 position: "bottom-start",
                 showConfirmButton: false,
                 timer: 4000,
-                toast: true
+                toast: true,
+                customClass: {
+                    popup: 'sweetalert-overlay'
+                }
             })
         }
 
@@ -121,7 +124,10 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
                 position: "bottom-start",
                 showConfirmButton: false,
                 timer: 4000,
-                toast: true
+                toast: true,
+                customClass: {
+                    popup: 'sweetalert-overlay'
+                }
             })
 
             getTasks()

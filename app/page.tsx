@@ -40,7 +40,10 @@ export default function Home() {
         position: "bottom-start",
         showConfirmButton: false,
         timer: 4000,
-        toast: true
+        toast: true,
+        customClass: {
+          popup: 'sweetalert-overlay'
+        }
       })
     }
 
@@ -68,7 +71,10 @@ export default function Home() {
         position: "bottom-start",
         showConfirmButton: false,
         timer: 4000,
-        toast: true
+        toast: true,
+        customClass: {
+          popup: 'sweetalert-overlay'
+        }
       })
     })
     .catch((error: any) => {

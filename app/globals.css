@@ -32,3 +32,7 @@ body ol {
   list-style: decimal !important; /* Reset the list-style property to its default value */
   padding-left: 1.5rem; /* Padding to accomodate for bullet points/decimals */
 }
+
+.sweetalert-overlay {
+  z-index: 9999 !important; /* Adjust the value as needed */
+}
