@@ -130,7 +130,7 @@ export default function Home() {
 
             <div className='flex justify-center'>
               <button
-                className="btn btn-primary btn-lg text-white mt-10 mr-5"
+                className="btn btn-primary btn-md md:btn-lg text-white mt-10 mr-5"
                 onClick={() => {
                   const modal = document.getElementById('add-task-modal') as HTMLDialogElement;
                   if (modal) {
@@ -141,9 +141,9 @@ export default function Home() {
                 Add a task
               </button>
               { completedTasksOnly ?
-                <button className="btn btn-secondary btn-lg text-white mt-10" onClick={() => setCompletedTasksOnly(false)}>See Uncompleted Tasks</button>
+                <button className="btn btn-secondary btn-md md:btn-lg text-white mt-10" onClick={() => setCompletedTasksOnly(false)}>See Uncompleted Tasks</button>
                 :
-                <button className="btn btn-accent btn-lg text-white mt-10" onClick={() => setCompletedTasksOnly(true)}>See Completed Tasks</button>
+                <button className="btn btn-accent btn-md md:btn-lg text-white mt-10" onClick={() => setCompletedTasksOnly(true)}>See Completed Tasks</button>
               }
             </div>
 
@@ -154,7 +154,7 @@ export default function Home() {
               tasks.length === 0 ? (
                 <h3 className='text-center text-lg'>No tasks yet. Go create some!</h3>
               ) : (
-                <div className="grid grid-cols-2 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   {tasks}
                 </div>
               )
