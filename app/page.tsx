@@ -1,7 +1,6 @@
 'use client'
 
 import Navbar from './components/Navbar'
-import TaskList from './components/tasks/TaskList'
 import TaskItem from "./components/tasks/TaskItem"
 import axios, { AxiosResponse } from 'axios'
 import { useState, useEffect } from 'react'
