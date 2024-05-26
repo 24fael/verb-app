@@ -129,10 +129,10 @@ export default function Home() {
   return (
     <>
       <Navbar/>
-      <main className="flex justify-center">
+      <main className="flex justify-center pt-24">
           <div className='pb-9'>
             <div className='flex justify-center'>
-              <h1 className='text-6xl font-bold'>Tasks</h1>
+              <h1 className='text-4xl font-bold'>Tasks</h1>
             </div>
 
             <div className='flex justify-center'>
