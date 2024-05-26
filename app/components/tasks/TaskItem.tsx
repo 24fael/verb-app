@@ -4,7 +4,8 @@ import { useVerbStore } from "@/state/verb-store"
 import { useState } from "react"
 import ExpandableText from "../miscellaneous/ExpandableText";
 import Linkify from "linkify-react";
-import { FaEdit, FaTrash, FaTimes, FaUndo, FaSave } from 'react-icons/fa';
+import { FaEdit, FaTrash} from 'react-icons/fa';
+import { Editor } from '@tinymce/tinymce-react'
 
 interface Task {
     title: string;
@@ -152,20 +153,27 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
                                 <input  
                                 type="text"
                                 placeholder="Type here"
-                                className="input input-bordered w-full max-w-xs"
+                                className="input input-bordered w-full max-w-xs mb-5"
                                 value={editTitle}
                                 onChange={(event) => setEditTitle(event.target.value)}/>
 
-                                <textarea 
-                                className="textarea textarea-bordered h-40 w-full mt-5"
-                                placeholder="Type here"
-                                value={editContent}
-                                onChange={(event) => setEditContent(event.target.value)}></textarea>
+                                <Editor
+                                    apiKey="zt3o4qfpwv2rfg470icmow23z4yiny8793gwegmabt4t2ofp" // Replace with your TinyMCE API key
+                                    value={editContent}
+                                    onEditorChange={setEditContent}
+                                    init={{
+                                        height: 200,
+                                        menubar: false,
+                                        plugins: 'lists',
+                                        toolbar:
+                                        'bold italic underline | bullist numlist'
+                                    }}
+                                />
                             </>
                         :
                             <>
                                 <Linkify options={linkifyOptions} as="h2" className={task.isCompleted ? "card-title line-through font-black" : "card-title font-black"}>{task.title}</Linkify>
-                                <ExpandableText text={task.content} maxLength={70} />
+                                <ExpandableText text={task.content} maxLength={70} taskIsCompleted={task.isCompleted} />
                             </>
                     }
                 </summary>

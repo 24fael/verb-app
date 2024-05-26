@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { useVerbStore } from '@/state/verb-store'
 import TasksSkeleton from './components/tasks/TasksSkeleton'
 import Swal from 'sweetalert2'
+import { Editor } from '@tinymce/tinymce-react'
 
 interface Task {
   title: string;
@@ -177,7 +178,18 @@ export default function Home() {
             <div className="label">
               <span className="label-text">Content (required)</span>
             </div>
-            <textarea className="textarea textarea-bordered h-24" placeholder="Type here" value={content} onChange={(event) => setContent(event.target.value)}></textarea>
+            <Editor
+              apiKey="zt3o4qfpwv2rfg470icmow23z4yiny8793gwegmabt4t2ofp" // Replace with your TinyMCE API key
+              value={content}
+              onEditorChange={setContent}
+              init={{
+                height: 400,
+                menubar: false,
+                plugins: 'lists',
+                toolbar:
+                  'bold italic underline | bullist numlist'
+              }}
+            />
           </label>
           <label className="form-control w-full max-w-xs my-5">
             <div className="label cursor-pointer">

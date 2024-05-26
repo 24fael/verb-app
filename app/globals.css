@@ -23,3 +23,12 @@
 }
 
 /* Custom CSS */
+body ul {
+  list-style: disc !important; /* Reset the list-style property to its default value */
+  padding-left: 1.5rem; /* Padding to accomodate for bullet points/decimals */
+}
+
+body ol {
+  list-style: decimal !important; /* Reset the list-style property to its default value */
+  padding-left: 1.5rem; /* Padding to accomodate for bullet points/decimals */
+}
