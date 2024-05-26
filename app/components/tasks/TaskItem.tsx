@@ -137,7 +137,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskID, task, getTasks }) => {
     };
 
     return(
-        <div className="card w-96 bg-base-100 shadow-xl mb-5">
+        <div className="card w-96 bg-base-200 hover:bg-base-300 shadow-lg mb-5">
             <div className="card-body">
             <details className="collapse collapse-arrow">
                 <summary className="collapse-title text-xl">
